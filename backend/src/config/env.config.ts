@@ -1,0 +1,20 @@
+import { getEnv } from "../utils/get-env";
+
+export const Env = {
+  PORT: getEnv("PORT", "8000"),
+  NODE_ENV: getEnv("NODE_ENV", "development"),
+
+  MONGO_URI: getEnv("MONGO_URI"),
+
+  JWT_SECRET: getEnv("JWT_SECRET"),
+  JWT_EXPIRES_IN: getEnv("JWT_EXPIRES_IN", "15m"),
+
+  JWT_REFRESH_SECRET: getEnv("JWT_REFRESH_SECRET"),
+  JWT_REFRESH_EXPIRES_IN: getEnv("JWT_REFRESH_EXPIRES_IN", "7d"),
+
+  GEMINI_API_KEY: getEnv("GEMINI_API_KEY"),
+
+  CRON_SECERET: getEnv("CRON_SECERET"),
+
+  FRONTEND_ORIGIN: getEnv("FRONTEND_ORIGIN", "localhost"),
+};
