@@ -9,6 +9,7 @@ import { asyncHandler } from "./middlewares/asyncHandler.middleware";
 import connectDatabase from "./config/database.config";
 
 const app = express();
+const BASE_PATH  = Env.BASE_PATH;
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -21,14 +22,26 @@ app.use(
 );
 
 app.get(
-  "/",
+  `/`,
   asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
-    throw new BadRequestException();
+    // throw new BadRequestException();
     res.status(HTTP_STATUS.OK).json({
       message: "hello it's working",
     });
   })
 );
+
+// routes import
+
+import authRouter from "./routes/auth.routes";
+
+
+// routes declaration...
+
+app.use(`${BASE_PATH}/auth`, authRouter)
+
+
+
 
 app.use(errorHandler);
 
