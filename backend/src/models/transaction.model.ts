@@ -70,7 +70,7 @@ const transactionSchema = new Schema<TransactionDocument>(
     amount: {
       type: Number,
       required: true,
-      min: [0, "Amount can't be less than 1"],
+      min: [0, "Amount can't be Negative"],
       set: (amount: number) => convertToCents(amount),
       get: (amount: number) => convertFromCents(amount),
     },
@@ -120,6 +120,6 @@ const transactionSchema = new Schema<TransactionDocument>(
   }
 );
 
-const TransactionModel = mongoose.model("Transaction", transactionSchema);
+const TransactionModel = mongoose.model<TransactionDocument>("Transaction", transactionSchema);
 
 export default TransactionModel;

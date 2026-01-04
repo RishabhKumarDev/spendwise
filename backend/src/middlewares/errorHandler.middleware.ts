@@ -10,6 +10,7 @@ export const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
       message: err.message,
       errorCode: err.errorCode,
     });
+    return;
   }
   res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
     message: err?.message || "Unexpected Error Occured",

@@ -53,6 +53,6 @@ userSchema.methods.comparePassword = function (
 ): Promise<boolean> {
   return compareValue(password, this.password);
 };
-const UserModel = mongoose.model("User", userSchema);
+const UserModel = mongoose.model<UserDocument>("User", userSchema);
 
 export default UserModel;
