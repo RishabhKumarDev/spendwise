@@ -2,12 +2,16 @@ import mongoose from "mongoose";
 import { HTTP_STATUS } from "../config/http.config";
 import { ErrorCodeEnum } from "../enums/error-code.enum";
 import UserModel from "../models/user.model";
-import { AppError } from "../utils/app-error";
-import { RegisterSchemaType } from "../validators/auth.validators";
+import { AppError, NotFoundException } from "../utils/app-error";
+import {
+  LoginSchemaType,
+  RegisterSchemaType,
+} from "../validators/auth.validators";
 import ReportSettingModel, {
   ReportFrequencyEnum,
 } from "../models/report-setting.model";
 import { createNextReportDate } from "../utils/helper";
+import { signJwtToken } from "../utils/jwt";
 
 export const registerUserService = async (body: RegisterSchemaType) => {
   const { name, email, password } = body;
@@ -47,4 +51,46 @@ export const registerUserService = async (body: RegisterSchemaType) => {
   } finally {
     session.endSession();
   }
+};
+
+export const loginUserService = async (body: LoginSchemaType) => {
+  const { email, password } = body;
+
+  const existingUser = await UserModel.findOne({ email }).select("+password");
+
+  if (!existingUser) {
+    throw new AppError(
+      "Invalid email or password",
+      HTTP_STATUS.UNAUTHORIZED,
+      ErrorCodeEnum.INVALID_CREDENTIALS
+    );
+  }
+
+  const isPasswordCorrect = await existingUser.comparePassword(password);
+
+  if (!isPasswordCorrect) {
+    throw new AppError(
+      "Invalid email or password",
+      HTTP_STATUS.UNAUTHORIZED,
+      ErrorCodeEnum.INVALID_CREDENTIALS
+    );
+  }
+
+  const { token, expiresAt } = signJwtToken({
+    userId: String(existingUser._id),
+  });
+
+  const reportSetting = await ReportSettingModel.findOne(
+    {
+      userId: existingUser.id,
+    },
+    { _id: 1, frequency: 1, isEnabled: 1 }
+  ).lean();
+
+  return {
+    accessToken: token,
+    expiresAt,
+    user: existingUser.omitPassword(),
+    reportSetting,
+  };
 };

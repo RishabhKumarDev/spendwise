@@ -22,6 +22,7 @@ export const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
     name: err?.name,
     message: err?.message,
     err: err?.issues,
+    stact: err?.stack
   });
 
   if (err instanceof ZodError) {
