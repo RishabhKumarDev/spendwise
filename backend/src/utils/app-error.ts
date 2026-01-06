@@ -69,3 +69,4 @@ export class InternalServerException extends AppError {
     );
   }
 }
+
