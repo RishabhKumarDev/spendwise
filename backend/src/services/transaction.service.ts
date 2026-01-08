@@ -1,5 +1,10 @@
+import axios from "axios";
 import TransactionModel from "../models/transaction.model";
-import { NotFoundException } from "../utils/app-error";
+import {
+  BadRequestException,
+  InternalServerException,
+  NotFoundException,
+} from "../utils/app-error";
 import { calculateNextOccurance } from "../utils/helper";
 import {
   CreateTransactionType,
@@ -7,6 +12,9 @@ import {
   TransactionPaginationType,
   UpdateTransactionType,
 } from "../validators/transaction.validator";
+import { genAI, genAiModel } from "../config/google-ai.config";
+import { createPartFromBase64, createUserContent } from "@google/genai";
+import { receiptPrompt } from "../utils/prompt";
 
 export const createTransactionService = async (
   userId: string,
@@ -237,5 +245,73 @@ export const bulkInsertTransactionService = async (
     };
   } catch (error) {
     throw error;
+  }
+};
+
+export const scanReceiptService = async (
+  file: Express.Multer.File | undefined
+) => {
+  if (!file) {
+    throw new BadRequestException("File is Missing");
+  }
+
+  try {
+    if (!file.path) {
+      throw new InternalServerException(
+        "Failed to Upload Image. Please try again"
+      );
+    }
+
+    const responseData = await axios.get(file.path, {
+      responseType: "arraybuffer",
+    });
+    const base64String = Buffer.from(responseData.data).toString("base64");
+
+    if (!base64String) {
+      throw new InternalServerException("Couldn't process file");
+    }
+
+    const result = await genAI.models.generateContent({
+      model: genAiModel,
+      contents: [
+        createUserContent([
+          receiptPrompt,
+          createPartFromBase64(base64String, file.mimetype),
+        ]),
+      ],
+      config: { temperature: 0, topP: 1, responseMimeType: "application/json" },
+    });
+
+    const response = result.text;
+    const cleanedText = response?.replace(/```(?:json)?\n?/g, "").trim();
+
+    if (!cleanedText) {
+      return {
+        error: "Couldn't read recipt context",
+      };
+    }
+
+    const data = JSON.parse(cleanedText);
+
+    if (!data.amount || !data.date) {
+      return { error: "Reciept missing required information" };
+    }
+
+    return {
+      title: data.title || "Reciept",
+      amount: data.amount,
+      date: data.date,
+      description: data.description,
+      category: data.category,
+      paymentMethod: data.paymentMethod,
+      type: data.type,
+      receiptUrl: file.path,
+    };
+  } catch (error) {
+    console.log(error)
+    return {
+      error: "Reciept scanning service is unavilable",
+      actualEr: error,
+    };
   }
 };

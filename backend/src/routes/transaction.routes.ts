@@ -7,15 +7,20 @@ import {
   duplicateTransaction,
   getAllTransaction,
   getTransactionById,
+  scanReceipt,
   updateTransaction,
 } from "../controllers/transaction.controller";
 import { passportAuthenticateJwt } from "../config/passport.config";
+import { upload } from "../config/cloudinary.config";
 
 const transactionRouter = Router({ mergeParams: true });
 
 transactionRouter.use(passportAuthenticateJwt);
 
 transactionRouter.route("/create").post(createTransaction);
+
+transactionRouter.route("/scan-receipt").post( upload.single("receipt") ,scanReceipt);
+
 transactionRouter.route("/all").get(getAllTransaction);
 
 transactionRouter.route("/duplicate/:id").post(duplicateTransaction);

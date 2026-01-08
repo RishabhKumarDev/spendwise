@@ -14,6 +14,8 @@ export const ErrorCodeEnum = {
   RESOURCE_NOT_FOUND: "RESOURCE_NOT_FOUND",
 
   INTERNAL_SERVER_ERROR: "INTERNAL_SERVER_ERROR",
+
+  FILE_UPLOAD_ERROR:"FILE_UPLOAD_ERROR"
 } as const;
 
 export type ErrorCodeEnumType =

@@ -18,6 +18,7 @@ import {
   duplicateTransactionService,
   getAllTransactionService,
   getTransactionByIdService,
+  scanReceiptService,
   updateTransactionService,
 } from "../services/transaction.service";
 
@@ -133,11 +134,20 @@ export const bulkTransaction = asyncHandler(
 
     const result = await bulkInsertTransactionService(userId, transactions);
 
-    res
-      .status(HTTP_STATUS.CREATED)
-      .json({
-        message: "Transactions created successfully",
-        data: { ...result },
-      });
+    res.status(HTTP_STATUS.CREATED).json({
+      message: "Transactions created successfully",
+      data: { ...result },
+    });
   }
 );
+
+export const scanReceipt = asyncHandler(async (req: Request, res: Response) => {
+  const file = req?.file;
+
+  const result = await scanReceiptService(file);
+
+  res.status(HTTP_STATUS.OK).json({
+    message: "Recipt scanned successfully",
+    data: { result },
+  });
+});
