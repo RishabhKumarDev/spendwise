@@ -4,6 +4,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "ts-node-dev --files src/index.ts",
+    "cron": "ts-node-dev --files src/worker.ts",
     "build": "tsc && cp ./package.json ./dist",
     "start": "node dist/index.js"
   },
