@@ -40,6 +40,7 @@ app.get(
 import authRouter from "./routes/auth.routes";
 import userRouter from "./routes/user.routes";
 import transactionRouter from "./routes/transaction.routes";
+import reportRouter from "./routes/report.routes";
 
 
 // routes declaration...
@@ -47,6 +48,7 @@ import transactionRouter from "./routes/transaction.routes";
 app.use(`${BASE_PATH}/auth`, authRouter);
 app.use(`${BASE_PATH}/user`, userRouter);
 app.use(`${BASE_PATH}/transaction`, transactionRouter);
+app.use(`${BASE_PATH}/report`, reportRouter);
 
 app.use(errorHandler);
 

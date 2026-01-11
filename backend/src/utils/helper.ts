@@ -8,7 +8,7 @@ import {
 } from "date-fns";
 import { RecurringIntervalEnum } from "../models/transaction.model";
 
-export const createNextReportDate = (lastSentDate?: Date): Date => {
+export const createNextReportDate = (lastSentDate?: Date | null): Date => {
   const now = new Date();
   const lastSent = lastSentDate || now;
 
