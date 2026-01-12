@@ -239,7 +239,7 @@ async function generateInsightsAI({
     const data = JSON.parse(cleanedText);
     return data;
   } catch (error) {
-    return error;
+    return [];
   }
 }
 
