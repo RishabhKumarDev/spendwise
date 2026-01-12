@@ -171,7 +171,7 @@ export const generateReportService = async (
   const availableBalance = totalIncome - totalExpense;
   const savingsRate = calculateSavingRate(totalIncome, totalExpense);
 
-  const periodLabel = `${format(fromDate, "MMMM d")} - ${format(toDate, "d yyyy")}`;
+  const periodLabel = `${format(fromDate, "MMMM d")} - ${format(toDate, "d, yyyy")}`;
   const insights = await generateInsightsAI({
     totalIncome,
     totalExpense,
@@ -239,7 +239,7 @@ async function generateInsightsAI({
     const data = JSON.parse(cleanedText);
     return data;
   } catch (error) {
-    return [];
+    return error;
   }
 }
 
