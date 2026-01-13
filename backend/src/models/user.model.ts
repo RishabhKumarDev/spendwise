@@ -31,6 +31,10 @@ const userSchema = new Schema<UserDocument>(
       required: true,
       select: false,
     },
+    profilePicture:{
+      type:String,
+      default:null
+    }
   },
   { timestamps: true }
 );
