@@ -231,6 +231,126 @@ export const summaryAnalyticsService = async (
   };
 };
 
+export const chartAnalyticsService = async (
+  userId: string,
+  preset?: DateRangePreset,
+  customFrom?: Date,
+  customTo?: Date
+) => {
+  const {
+    from,
+    to,
+    value: rangeValue,
+    label,
+  } = getDateRange(preset, customFrom, customTo);
+
+  const match = {
+    $match: {
+      userId: new mongoose.Types.ObjectId(userId),
+      ...(from && to && { date: { $gte: from, $lte: to } }),
+    },
+  };
+
+  const firstGroup = {
+    $group: {
+      _id: {
+        $dateTrunc: {
+          date: "$date",
+          unit: "day",
+          // timezone: "UTC",
+        },
+      },
+      totalIncome: {
+        $sum: {
+          $cond: [
+            { $eq: ["$type", TransactionTypeEnum.INCOME] },
+            { $abs: "$amount" },
+            0,
+          ],
+        },
+      },
+      totalExpense: {
+        $sum: {
+          $cond: [
+            { $eq: ["$type", TransactionTypeEnum.EXPENSE] },
+            { $abs: "$amount" },
+            0,
+          ],
+        },
+      },
+      incomeCount: {
+        $sum: {
+          $cond: [{ $eq: ["$type", TransactionTypeEnum.INCOME] }, 1, 0],
+        },
+      },
+      expenseCount: {
+        $sum: {
+          $cond: [{ $eq: ["$type", TransactionTypeEnum.EXPENSE] }, 1, 0],
+        },
+      },
+    },
+  };
+
+  const firstProject = {
+    $project: {
+      _id: 0,
+      date: {
+        $dateToString: {
+          format: "%Y-%m-%d",
+          date: "$_id",
+        },
+      },
+      totalIncome: 1,
+      totalExpense: 1,
+      incomeCount: 1,
+      expenseCount: 1,
+    },
+  };
+
+  const secondGroup = {
+    $group: {
+      _id: null,
+      chartData: { $push: "$$ROOT" },
+      totalIncomeCount: { $sum: "$incomeCount" },
+      totalExpenseCount: { $sum: "$expenseCount" },
+    },
+  };
+
+  const secondProject = {
+    $project: {
+      _id: 0,
+      chartData: 1,
+      totalIncomeCount: 1,
+      totalExpenseCount: 1,
+    },
+  };
+  const [result] = await TransactionModel.aggregate([
+    match,
+    firstGroup,
+    { $sort: { _id: 1 } },
+    firstProject,
+    secondGroup,
+    secondProject,
+  ]);
+
+  const transformedData = (result?.chartData || []).map((item: any) => ({
+    date: item.date,
+    totalIncome: convertFromCents(item.totalIncome),
+    totalExpense: convertFromCents(item.totalExpense),
+  }));
+
+  return {
+    chartData: transformedData,
+    totalIncomeCount: result?.totalIncomeCount,
+    totalExpenseCount: result?.totalExpenseCount,
+    preset: {
+      from,
+      to,
+      value: rangeValue || DateRangeEnum.ALL_TIME,
+      label: label || "Custom",
+    },
+  };
+};
 const calculatePercentageChange = (
   previous: number,
   current: number

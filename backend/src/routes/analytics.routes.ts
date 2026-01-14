@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { summaryAnalytics } from "../controllers/analytics.controller";
+import { chartAnalytics, summaryAnalytics } from "../controllers/analytics.controller";
 import { passportAuthenticateJwt } from "../config/passport.config";
 
 const analyticsRouter = Router({ mergeParams: true });
@@ -8,5 +8,7 @@ const analyticsRouter = Router({ mergeParams: true });
 analyticsRouter.use(passportAuthenticateJwt);
 
 analyticsRouter.route("/summary").get(summaryAnalytics);
+analyticsRouter.route("/chart").get(chartAnalytics);
+
 
 export default analyticsRouter;
