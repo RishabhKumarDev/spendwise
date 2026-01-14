@@ -3,15 +3,16 @@ import { asyncHandler } from "../middlewares/asyncHandler.middleware";
 import { DateRangePreset } from "../enums/date-range.enum";
 import { HTTP_STATUS } from "../config/http.config";
 import { summaryAnalyticsService } from "../services/analytics.service";
+import { summaryAnalyticsQuerySchema } from "../validators/analytics.validators";
 
 export const summaryAnalytics = asyncHandler(
   async (req: Request, res: Response) => {
     const userId = req.user?._id;
-    const { preset, from, to } = req.query;
+    const { preset, from, to } = summaryAnalyticsQuerySchema.parse(req.query);
     const filters = {
       dateRangePreset: preset as DateRangePreset,
-      customFrom: from ? new Date(from as string) : undefined,
-      customTo: to ? new Date(to as string) : undefined,
+      customFrom: from,
+      customTo: to,
     };
 
     const stats = await summaryAnalyticsService(

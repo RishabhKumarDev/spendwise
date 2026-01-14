@@ -3,7 +3,7 @@ import { getCurrentUser, updateUser } from "../controllers/user.controller";
 import { passportAuthenticateJwt } from "../config/passport.config";
 import { upload } from "../config/cloudinary.config";
 
-const userRouter = Router();
+export const userRouter = Router();
 
 userRouter.use(passportAuthenticateJwt);
 

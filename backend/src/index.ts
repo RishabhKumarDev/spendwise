@@ -41,6 +41,7 @@ import authRouter from "./routes/auth.routes";
 import userRouter from "./routes/user.routes";
 import transactionRouter from "./routes/transaction.routes";
 import reportRouter from "./routes/report.routes";
+import analyticsRouter from "./routes/analytics.routes";
 
 
 // routes declaration...
@@ -49,6 +50,8 @@ app.use(`${BASE_PATH}/auth`, authRouter);
 app.use(`${BASE_PATH}/user`, userRouter);
 app.use(`${BASE_PATH}/transaction`, transactionRouter);
 app.use(`${BASE_PATH}/report`, reportRouter);
+app.use(`${BASE_PATH}/analytics`, analyticsRouter);
+
 
 app.use(errorHandler);
 
