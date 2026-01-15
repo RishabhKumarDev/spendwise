@@ -2,7 +2,11 @@ import { Request, Response } from "express";
 import { asyncHandler } from "../middlewares/asyncHandler.middleware";
 import { DateRangePreset } from "../enums/date-range.enum";
 import { HTTP_STATUS } from "../config/http.config";
-import { chartAnalyticsService, summaryAnalyticsService } from "../services/analytics.service";
+import {
+  chartAnalyticsService,
+  expensePieChartBreakdownService,
+  summaryAnalyticsService,
+} from "../services/analytics.service";
 import { summaryAnalyticsQuerySchema } from "../validators/analytics.validators";
 
 export const summaryAnalytics = asyncHandler(
@@ -42,5 +46,27 @@ export const chartAnalytics = asyncHandler(
     res
       .status(HTTP_STATUS.OK)
       .json({ message: "Chart fetched successfully", data: { chartData } });
+  }
+);
+
+export const expensePieChartBreakdown = asyncHandler(
+  async (req: Request, res: Response) => {
+    const userId = req.user?._id;
+    const body = summaryAnalyticsQuerySchema.parse(req.query);
+    const { preset, from, to } = body;
+
+    const pieChartData = await expensePieChartBreakdownService(
+      userId,
+      preset,
+      from,
+      to
+    );
+
+    res.status(HTTP_STATUS.OK).json({
+      message: "PieChart data fetched successfully",
+      data:{
+        pieChartData
+      }
+    });
   }
 );

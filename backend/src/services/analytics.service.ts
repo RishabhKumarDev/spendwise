@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose, { PipelineStage } from "mongoose";
 import { DateRangeEnum, DateRangePreset } from "../enums/date-range.enum";
 import TransactionModel, {
   TransactionTypeEnum,
@@ -351,6 +351,146 @@ export const chartAnalyticsService = async (
     },
   };
 };
+
+export const expensePieChartBreakdownService = async (
+  userId: string,
+  dateRangePreset?: DateRangePreset,
+  customFrom?: Date,
+  customTo?: Date
+) => {
+  const {
+    from,
+    to,
+    value: rangeValue,
+    label,
+  } = getDateRange(dateRangePreset, customFrom, customTo);
+
+  const match: PipelineStage.Match = {
+    $match: {
+      userId: new mongoose.Types.ObjectId(userId),
+      type: TransactionTypeEnum.EXPENSE,
+      ...(from && to && { date: { $gte: from, $lte: to } }),
+    },
+  };
+
+  const group: PipelineStage.Group = {
+    $group: {
+      _id: "$category",
+      value: { $sum: "$amount" },
+    },
+  };
+
+  const sort: PipelineStage.Sort = {
+    $sort: {
+      value: -1,
+    },
+  };
+
+  const facet: PipelineStage.Facet = {
+    $facet: {
+      topThree: [{ $limit: 3 }],
+      others: [
+        { $skip: 3 },
+        {
+          $group: {
+            _id: "others",
+            value: { $sum: { $abs: "$value" } },
+          },
+        },
+      ],
+    },
+  };
+
+  const project: PipelineStage.Project = {
+    $project: {
+      categories: {
+        $concatArrays: ["$topThree", "$others"],
+      },
+    },
+  };
+
+  const unwind: PipelineStage.Unwind = {
+    $unwind: "$categories",
+  };
+
+  const secondGroup: PipelineStage.Group = {
+    $group: {
+      _id: null,
+      totalSpent: { $sum: "$categories.value" },
+      breakdown: { $push: "$categories" },
+    },
+  };
+
+  const secondProject: PipelineStage.Project = {
+    $project: {
+      _id: 0,
+      totalSpent: 1,
+      breakdown: {
+        $map: {
+          input: "$breakdown",
+          as: "cat",
+          in: {
+            name: "$$cat._id",
+            value: "$$cat.value",
+            percentage: {
+              $cond: [
+                { $eq: ["$totalSpent", 0] },
+                0,
+                {
+                  $round: [
+                    {
+                      $multiply: [
+                        {
+                          $divide: ["$$cat.value", "$totalSpent"],
+                        },
+                        100,
+                      ],
+                    },
+                    0,
+                  ],
+                },
+              ],
+            },
+          },
+        },
+      },
+    },
+  };
+
+  const pipeline: PipelineStage[] = [
+    match,
+    group,
+    sort,
+    facet,
+    project,
+    unwind,
+    secondGroup,
+    secondProject,
+  ];
+
+  const [result] = await TransactionModel.aggregate(pipeline);
+
+  const data = result || { totalSpent: 0, breakdown: [] };
+
+  const transformedData = {
+    totalSpent: convertFromCents(data.totalSpent),
+    breakdown: data.breakdown.map((item: any) => ({
+      ...item,
+      value: convertFromCents(item.value),
+    })),
+  };
+
+  return {
+    ...transformedData,
+    preset: {
+      from,
+      to,
+      value: rangeValue || DateRangeEnum.ALL_TIME,
+      label: label || "Custom",
+    },
+  };
+};
+
 const calculatePercentageChange = (
   previous: number,
   current: number
