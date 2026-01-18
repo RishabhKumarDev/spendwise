@@ -29,7 +29,7 @@ export const summaryAnalytics = asyncHandler(
     res.status(HTTP_STATUS.OK).json({
       message: "Summary fetched successfully",
       data: {
-        stats,
+        ...stats,
       },
     });
   }
@@ -45,7 +45,7 @@ export const chartAnalytics = asyncHandler(
 
     res
       .status(HTTP_STATUS.OK)
-      .json({ message: "Chart fetched successfully", data: { chartData } });
+      .json({ message: "Chart fetched successfully", data: { ...chartData } });
   }
 );
 
@@ -65,7 +65,7 @@ export const expensePieChartBreakdown = asyncHandler(
     res.status(HTTP_STATUS.OK).json({
       message: "PieChart data fetched successfully",
       data:{
-        pieChartData
+        ...pieChartData
       }
     });
   }
