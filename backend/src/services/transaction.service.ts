@@ -136,7 +136,6 @@ export const duplicateTransactionService = async (
     updatedAt: undefined,
   });
 
-  return dublicatedTr;
 };
 
 export const updateTransactionService = async (

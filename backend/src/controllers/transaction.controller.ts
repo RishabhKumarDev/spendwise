@@ -30,9 +30,6 @@ export const createTransaction = asyncHandler(
     const transaction = await createTransactionService(userId, body);
     res.status(HTTP_STATUS.CREATED).json({
       message: "Transaction Created Successfully",
-      data: {
-        transaction,
-      },
     });
   }
 );
@@ -64,7 +61,7 @@ export const getTransactionById = asyncHandler(
 
     res.status(HTTP_STATUS.OK).json({
       message: "Transaction fetched sucessfully",
-      data: { transaction },
+      data: { ...transaction },
     });
   }
 );
@@ -81,7 +78,6 @@ export const duplicateTransaction = asyncHandler(
 
     res.status(HTTP_STATUS.CREATED).json({
       message: "Transaction duplicated sucessfully",
-      data: { transaction },
     });
   }
 );
@@ -148,6 +144,6 @@ export const scanReceipt = asyncHandler(async (req: Request, res: Response) => {
 
   res.status(HTTP_STATUS.OK).json({
     message: "Recipt scanned successfully",
-    data: { result },
+    data: { ...result },
   });
 });
