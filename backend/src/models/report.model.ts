@@ -11,7 +11,7 @@ export interface ReportDocument {
   period: string;
   sentDate: Date;
   status: ReportStatusEnum;
-  createAt: Date;
+  createdAt: Date;
   updatedAt: Date;
 }
 
