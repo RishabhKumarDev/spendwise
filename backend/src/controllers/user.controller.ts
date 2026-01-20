@@ -15,7 +15,7 @@ export const getCurrentUser = asyncHandler(
 
     res.status(HTTP_STATUS.OK).json({
       message: "User fetched successfully",
-      data: { user },
+      data: { ...user },
     });
   }
 );
@@ -28,5 +28,5 @@ export const updateUser = asyncHandler(async (req: Request, res: Response) => {
   const user = await updateUserService(userId, body, profilePic);
   res
     .status(HTTP_STATUS.OK)
-    .json({ message: "Successfully update user profile", data: { user } });
+    .json({ message: "Successfully update user profile", data: { ...user } });
 });
