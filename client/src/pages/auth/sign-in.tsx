@@ -1,6 +1,9 @@
+import SignUpForm from "@/pages/auth/_component/signup-form";
 
 export default function SignIn() {
   return (
-    <div>SignIn</div>
+    <div>
+      <SignUpForm/>
+    </div>
   )
 }
