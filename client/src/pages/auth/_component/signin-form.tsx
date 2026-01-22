@@ -22,7 +22,7 @@ import { setCredentials } from "@/features/auth/authSlice";
 
 const schema = z.object({
   email: z.string().email("Invalid Email Address"),
-  password: z.string().min(6, "password must be at least 6 characters"),
+  password: z.string().min(4, "password must be at least 6 characters"),
 });
 
 type FormValues = z.infer<typeof schema>;
