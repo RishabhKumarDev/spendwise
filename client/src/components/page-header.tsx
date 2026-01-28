@@ -14,8 +14,8 @@ function PageHeader({
   renderPageheader,
 }: PageHeaderProps) {
   return (
-    <div>
-      <div className="">
+   <div className="w-full pb-20 pt-4 px-5 lg:px-0 bg-[#1a1e2a] text-white">
+        <div className="w-full max-w-[var(--max-width)]  mx-auto">
         {renderPageheader ? (
           <Fragment> {renderPageheader} </Fragment>
         ) : (
