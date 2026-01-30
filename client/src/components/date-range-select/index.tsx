@@ -172,6 +172,10 @@ function DateRangeSelect({
                 "justify-start text-left",
                 dateRange?.value === preset.value && "bg-accent",
               )}
+              onClick={()=>{
+                setDateRange(preset.getRange())
+                setOpen(false)
+              }}
             >
               {preset.label}
             </Button>
