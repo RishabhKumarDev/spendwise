@@ -102,3 +102,15 @@ export const transactionApi = apiClient.injectEndpoints({
     }),
   }),
 });
+
+export const {
+  useCreateTransactionMutation,
+  useGetAllTransactionsQuery,
+  useAiScanReceiptMutation,
+  useGetSingleTransactionQuery,
+  useDuplicateTransactionMutation,
+  useUpdateTransactionMutation,
+  useDeleteTransactionMutation,
+  useBulkDeleteTransactionMutation,
+  useBulkImportTransactionMutation,
+}= transactionApi;
