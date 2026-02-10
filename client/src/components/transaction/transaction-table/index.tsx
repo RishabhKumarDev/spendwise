@@ -1,6 +1,9 @@
-import { _TransactionType } from "@/constant";
+import { _TRANSACTION_TYPE, _TransactionType } from "@/constant";
 import { useState } from "react";
 import useDebouncedSearch from "@/hooks/use-debounce-search";
+import DataTable from "@/components/data-table";
+import { TRANSACTION_DATA } from "@/components/transaction/transaction-table/data";
+import { transactionColumns } from "@/components/transaction/transaction-table/column";
 // import {
 //   useBulkDeleteTransactionMutation,
 //   useGetAllTransactionsQuery,
@@ -63,6 +66,8 @@ const pagination = {
   };
 
   const handleSearch = (value: string) => {
+    console.log(debouncedTerm);
+
     setSearchTerm(value);
   };
 
@@ -70,6 +75,7 @@ const pagination = {
     const { type, frequently } = filter;
     setFilter((prev) => ({
       ...prev,
+      pageNumber: 1,
       type: type as _TransactionType,
       recurringStatus: frequently as "RECURRING" | "NON_RECURRING",
     }));
@@ -81,8 +87,11 @@ const pagination = {
   const handlePageChange = (pageNumber: number) => {
     setFilter((prev) => ({ ...prev, pageNumber }));
   };
-  /*
   const handleBulkDelete = async (transactionIds: string[]) => {
+    console.log(transactionIds);
+
+    /*
+
     try {
       await bulkDeleteTransaction(transactionIds).unwrap();
       toast.success("Transactions deleted successfully");
@@ -91,10 +100,8 @@ const pagination = {
         error?.data?.data?.message || "Failed to delete transactions",
       );
     }
-  };
-
 */
-
+  };
 
   return (
     <DataTable
@@ -103,7 +110,7 @@ const pagination = {
       searchPlaceholder="Search transactions..."
       isLoading={false}
       isBulkDeleting={false}
-      isShowPagination={props.isShowPagination}
+      isShowPagination={isShowPagination}
       pagination={pagination}
       filters={[
         {
