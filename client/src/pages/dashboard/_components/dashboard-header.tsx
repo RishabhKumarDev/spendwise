@@ -1,4 +1,4 @@
-import AddTransactionDrawer from "@/components/add-transaction-drawer";
+import AddTransactionDrawer from "@/components/transaction/add-transaction-drawer";
 import DateRangeSelect, { DateRangeType } from "@/components/date-range-select";
 
 interface Props {
@@ -19,7 +19,7 @@ function DashboardHeader({ title, subtitle, dateRange, setDateRange }: Props) {
           dateRange={dateRange || null}
           setDateRange={(range) => setDateRange?.(range)}
         />
-      //:TODO:  <AddTransactionDrawer/>
+        <AddTransactionDrawer />
       </div>
     </div>
   );
