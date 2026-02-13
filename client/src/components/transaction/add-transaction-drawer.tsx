@@ -29,14 +29,14 @@ function AddTransactionDrawer() {
       </DrawerTrigger>
       <DrawerContent className="max-w-md overflow-hidden overflow-y-auto">
         <DrawerHeader className="relative">
-          <>
+          <div>
             <DrawerTitle className="text-xl font-semibold">
               Add Transaction
             </DrawerTitle>
             <DrawerDescription>
               Add a new transaction to track you finances
             </DrawerDescription>
-          </>
+          </div>
           <DrawerClose className=" absolute top-4 right-4">
             <XIcon className=" h-5 w-5 !cursor_pointer" />
           </DrawerClose>

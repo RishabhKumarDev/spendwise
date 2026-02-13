@@ -68,6 +68,7 @@ function Navbar() {
                     pathname === route.href && "text-white",
                   )}
                   asChild
+                  key={route.href}
                 >
                   <NavLink key={route.href} to={route.href}>
                     {route.label}
@@ -92,6 +93,7 @@ function Navbar() {
                         pathname === route.href && "!bg-black/10 text-black",
                       )}
                       asChild
+                      key={route.href}
                     >
                       <NavLink key={route.href} to={route.href}>
                         {route.label}
