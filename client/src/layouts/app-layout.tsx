@@ -1,4 +1,5 @@
 import Navbar from "@/components/navbar";
+import EditTransactionDrawer from "@/components/transaction/edit-transaction-drawer";
 import { Outlet } from "react-router-dom";
 
 export default function AppLayout() {
@@ -10,7 +11,7 @@ export default function AppLayout() {
           <Outlet />
         </main>
       </div>
-      // TODO: EditTransaction Drawer
+      <EditTransactionDrawer />
     </>
   );
 }
