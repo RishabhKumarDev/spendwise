@@ -14,12 +14,12 @@ function PageHeader({
   renderPageheader,
 }: PageHeaderProps) {
   return (
-   <div className="w-full pb-20 pt-4 px-5 lg:px-0 bg-[#1a1e2a] text-white">
-        <div className="w-full max-w-[var(--max-width)]  mx-auto">
+    <div className="w-full pb-20 pt-4 px-5 lg:px-0 bg-[#1a1e2a] text-white">
+      <div className="w-full max-w-[var(--max-width)]  mx-auto">
         {renderPageheader ? (
           <Fragment> {renderPageheader} </Fragment>
         ) : (
-          <div className="">
+          <div className="w-full flex flex-col gap-3 items-start justify-start lg:items-center lg:flex-row lg:justify-between">
             {(title || subtitle) && (
               <div className="space-y-1">
                 {title && (

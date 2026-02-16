@@ -7,7 +7,7 @@ interface PageLayoutProps {
   className?: string;
   title?: string;
   subtitle?: string;
-  rightAction?: boolean;
+  rightAction?: ReactNode;
   showHeader?: boolean;
   addMarginTop?: boolean;
   renderPageHeader?: ReactNode;
