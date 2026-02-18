@@ -74,7 +74,13 @@ function ImportTransactionModal() {
           />
         );
       case 3:
-        return <ConfirmationStep />;
+        return <ConfirmationStep
+            file={file}
+            mappings={mappings}
+            csvData={csvData}
+            onBack={() => handleBack(2)}
+            onComplete={() => handleClose()}
+          />
       default:
         return null;
     }

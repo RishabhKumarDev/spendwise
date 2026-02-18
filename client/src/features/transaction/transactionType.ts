@@ -73,10 +73,6 @@ export interface UpdateTransactionPayload {
   payload: CreateTransactionBody;
 }
 
-export interface BulkImportTransactionPayload {
-  transactions: Omit<CreateTransactionBody, "recurringInterval">[];
-}
-
 
 export interface AIScanReceiptData {
   title: string;
@@ -92,4 +88,19 @@ export interface AIScanReceiptData {
 export interface AIScanReceiptResponse {
   message: string;
   data: AIScanReceiptData;
+}
+
+export interface BulkTransactionType {
+  title: string;
+  type: _TransactionType;
+  amount: number;
+  category: string;
+  description: string;
+  date: string;
+  paymentMethod: PaymentMethodType;
+  isRecurring: boolean;
+}
+
+export interface BulkImportTransactionPayload {
+  transactions: BulkTransactionType[];
 }
