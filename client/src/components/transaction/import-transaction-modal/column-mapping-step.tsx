@@ -102,7 +102,7 @@ function ColumnMappingStep({
       <DialogHeader>
         <DialogTitle>Map CSV Columns</DialogTitle>
         <DialogDescription>
-          Match the columns from you file to transaction <fieldset></fieldset>
+          Match the columns from you file to transaction field
         </DialogDescription>
       </DialogHeader>
 
