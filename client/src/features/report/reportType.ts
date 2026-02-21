@@ -5,13 +5,13 @@ interface Pagination {
   skip: number;
   pageNumber: number;
 }
-enum ReportStatusEnum {
+export enum ReportStatusEnum {
   SENT = "SENT",
   PENDING = "PENDING",
   FAILED = "FAILED",
   NO_ACTIVITY = "NO_ACTIVITY",
 }
-interface ReportType {
+export interface ReportType {
   _id: string;
   userId: string;
   period: string;

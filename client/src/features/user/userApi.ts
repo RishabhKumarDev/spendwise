@@ -13,3 +13,5 @@ export const userApi = apiClient.injectEndpoints({
         })
     })
 })
+
+export const {useUpdateUserMutation} = userApi;

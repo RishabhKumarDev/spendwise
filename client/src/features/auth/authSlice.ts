@@ -8,7 +8,7 @@ interface User {
 }
 
 interface ReportSetting {
-  userId: string;
+  userId?: string;
   frequency?: string;
   isEnabled: boolean;
 }
@@ -28,10 +28,10 @@ const initialState: AuthState = {
 };
 
 type PayloadActionType = PayloadAction<{
-  token: string | null;
-  expiresAt: number | null;
-  user: User | null;
-  reportSetting: ReportSetting | null;
+  token?: string | null;
+  expiresAt?: number | null;
+  user?: User | null;
+  reportSetting?: ReportSetting | null;
 }>;
 
 export const authSlice = createSlice({
@@ -40,10 +40,19 @@ export const authSlice = createSlice({
   reducers: {
     setCredentials: (state, action: PayloadActionType) => {
       console.log("AUTH SLICE", action.payload);
-      state.accessToken = action.payload.token;
-      state.expiresAt = action.payload.expiresAt;
-      state.user = action.payload.user;
-      state.reportSetting = action.payload.reportSetting;
+      const { token, expiresAt, user, reportSetting } = action.payload;
+
+      if (token !== undefined) state.accessToken = token;
+      if (expiresAt !== undefined) state.expiresAt = expiresAt;
+      if (user !== undefined) {
+        state.user = state.user ? { ...state.user, ...user } : user;
+      }
+
+      if (reportSetting !== undefined) {
+        state.reportSetting = state.reportSetting
+          ? { ...state.reportSetting, ...reportSetting }
+          : reportSetting;
+      }
     },
     updateCredentials: (state, action: PayloadActionType) => {
       console.log("AUTH SLICE", action.payload);
@@ -55,7 +64,7 @@ export const authSlice = createSlice({
       if (user !== undefined) {
         state.user = state.user ? { ...state.user, ...user } : user;
       }
-      
+
       if (reportSetting !== undefined) {
         state.reportSetting = state.reportSetting
           ? { ...state.reportSetting, ...reportSetting }
