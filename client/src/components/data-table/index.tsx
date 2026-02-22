@@ -264,14 +264,16 @@ function DataTable<TData>({
       </div>
 
       {isShowPagination && (
-        <DataTablePagination
-          pageNumber={pagination?.pageNumber || 1}
-          pageSize={pagination?.pageSize || 10}
-          totalCount={pagination?.totalItems || 0}
-          totalPages={pagination?.totalPages || 0}
-          onPageChange={onPageChange}
-          onPageSizeChange={onPageSizeChange}
-        />
+        <div className="mt-4">
+          <DataTablePagination
+            pageNumber={pagination?.pageNumber || 1}
+            pageSize={pagination?.pageSize || 10}
+            totalCount={pagination?.totalItems || 0}
+            totalPages={pagination?.totalPages || 0}
+            onPageChange={onPageChange}
+            onPageSizeChange={onPageSizeChange}
+          />
+        </div>
       )}
     </div>
   );
