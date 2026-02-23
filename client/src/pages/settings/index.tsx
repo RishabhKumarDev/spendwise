@@ -1,12 +1,64 @@
-import { Outlet } from "react-router-dom";
+import PageLayout from "@/components/page-layout";
+import { buttonVariants } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { cn } from "@/lib/utils";
+import { PROTECTED_ROUTES } from "@/routes/common/routePath";
+import { Link, Outlet, useLocation } from "react-router-dom";
 
+interface ItemPropsType {
+  items: {
+    title: string;
+    href: string;
+  }[];
+}
 export default function Settings() {
+  const sidebarNavItems = [
+    { title: "Account", href: PROTECTED_ROUTES.SETTINGS },
+    { title: "Appearance", href: PROTECTED_ROUTES.SETTINGS_BILLING },
+    { title: "Billings", href: PROTECTED_ROUTES.SETTINGS_APPEARANCE },
+  ];
+
   return (
-    <div>
-      Settings
-      <div className="">
-        <Outlet />
-      </div>
-    </div>
+    <PageLayout
+      title="Settings"
+      subtitle="Manage your account settings and set e-mail preferences."
+      addMarginTop
+    >
+      <Card className="border shadow-none">
+        <CardContent>
+          <div className="flex flex-col pt-2 pb-10 space-y-8 lg:flex-row lg:space-x-12 lg:space-y-0">
+            <aside className="mr-4 lg:w-1/5">
+              <SidebarNav items={sidebarNavItems} />
+            </aside>
+            <div className="flex-1 lg:max-w-2xl">
+              <Outlet />
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    </PageLayout>
+  );
+}
+
+function SidebarNav({ items }: ItemPropsType) {
+  const { pathname } = useLocation();
+  return (
+    <nav className="flex space-x-2 lg:flex-col lg:space-y-1">
+      {items.map((item) => (
+        <Link
+          key={item.href}
+          to={item.href}
+          className={cn(
+            buttonVariants({ variant: "ghost" }),
+            pathname === item.href
+              ? "bg-muted hover:bg-muted"
+              : "hover:bg-transparent hover:underline",
+            "justify-start",
+          )}
+        >
+          {item.title}
+        </Link>
+      ))}
+    </nav>
   );
 }
