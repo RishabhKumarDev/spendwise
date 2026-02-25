@@ -1,3 +1,4 @@
+import useAuthExpiration from "@/hooks/use-auth-expiration";
 import AppLayout from "@/layouts/app-layout";
 import BaseLayout from "@/layouts/base-layout";
 import NotFound from "@/pages/notfound";
@@ -27,7 +28,8 @@ const router = createBrowserRouter([
 ]);
 
 function AppRoutes() {
-  //TODO: use-authExpiration
+  useAuthExpiration();
+  
   return <RouterProvider router={router} />;
 }
 

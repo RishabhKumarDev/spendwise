@@ -28,7 +28,7 @@ const initialState: AuthState = {
 };
 
 type PayloadActionType = PayloadAction<{
-  token?: string | null;
+  accessToken?: string | null;
   expiresAt?: number | null;
   user?: User | null;
   reportSetting?: ReportSetting | null;
@@ -40,9 +40,9 @@ export const authSlice = createSlice({
   reducers: {
     setCredentials: (state, action: PayloadActionType) => {
       console.log("AUTH SLICE", action.payload);
-      const { token, expiresAt, user, reportSetting } = action.payload;
+      const { accessToken, expiresAt, user, reportSetting } = action.payload;
 
-      if (token !== undefined) state.accessToken = token;
+      if (accessToken !== undefined) state.accessToken = accessToken;
       if (expiresAt !== undefined) state.expiresAt = expiresAt;
       if (user !== undefined) {
         state.user = state.user ? { ...state.user, ...user } : user;
@@ -57,9 +57,9 @@ export const authSlice = createSlice({
     updateCredentials: (state, action: PayloadActionType) => {
       console.log("AUTH SLICE", action.payload);
 
-      const { token, expiresAt, user, reportSetting } = action.payload;
+      const { accessToken, expiresAt, user, reportSetting } = action.payload;
 
-      if (token !== undefined) state.accessToken = token;
+      if (accessToken !== undefined) state.accessToken = accessToken;
       if (expiresAt !== undefined) state.expiresAt = expiresAt;
       if (user !== undefined) {
         state.user = state.user ? { ...state.user, ...user } : user;
