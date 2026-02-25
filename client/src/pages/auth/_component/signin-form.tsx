@@ -45,6 +45,7 @@ const SignUpForm = () => {
     console.log(values);
     try {
       const response = await login(values).unwrap();
+      console.log("RESPONSE:", response)
       dispatch(setCredentials(response?.data));
       form.reset();
       toast.success("Sign In successfully");

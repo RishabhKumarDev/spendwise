@@ -15,7 +15,7 @@ import { Button } from "@/components/ui/button";
 import { useRegisterMutation } from "@/features/auth/authApi";
 import { toast } from "sonner";
 import { Link, useNavigate } from "react-router-dom";
-import { AUTH_ROUTES, PROTECTED_ROUTES } from "@/routes/common/routePath";
+import { AUTH_ROUTES, } from "@/routes/common/routePath";
 import { Loader } from "lucide-react";
 
 const schema = z.object({
@@ -46,7 +46,7 @@ const SignUpForm = () => {
       await register(values).unwrap();
       form.reset();
       toast.success("Sign up successfully");
-      navigate(PROTECTED_ROUTES.OVERVIEW);
+      navigate(AUTH_ROUTES.SIGN_IN);
     } catch (error:any) {
       toast.error(error.data?.message || "Failed to sign up");
     }

@@ -79,18 +79,20 @@ function Navbar() {
 
             {/* mobile navigation */}
             <Sheet onOpenChange={setIsOpen} open={isOpen}>
-              <SheetContent side="left">
-                <nav className="flex flex-col gap-y-2 pt-9">
+              <SheetContent
+                side="left"
+                className="bg-background text-foreground"
+              >
+                <nav className="flex flex-col gap-y-2 pt-9 pl-3 pr-10">
                   {routes.map((route) => (
                     <Button
                       size="sm"
                       variant="ghost"
                       className={cn(
-                        `w-full font-normal py-4.5
-                       hover:bg-white/10 hover:text-black border-none
-                       text-black/70 focus:bg-white/30
-                       transtion !bg-transparent justify-start`,
-                        pathname === route.href && "!bg-black/10 text-black",
+                        "w-full justify-start font-normal py-4.5 bg-transparent border-none",
+                        "text-foreground hover:text-foreground",
+                        "hover:bg-accent focus:bg-accent",
+                        pathname === route.href && "bg-accent",
                       )}
                       asChild
                       key={route.href}
