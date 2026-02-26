@@ -26,11 +26,11 @@ import { formatCurrency } from "@/lib/format-curency";
 import useEditTransactionDrawer from "@/hooks/use-edit-transaction-drawer";
 import { TransactionType } from "@/features/transaction/transactionType";
 import { _TRANSACTION_FREQUENCY, _TRANSACTION_TYPE } from "@/constant";
-// import {
-//   useDeleteTransactionMutation,
-//   useDuplicateTransactionMutation,
-// } from "@/features/transaction/transactionApi";
-// import { toast } from "sonner";
+import {
+  useDeleteTransactionMutation,
+  useDuplicateTransactionMutation,
+} from "@/features/transaction/transactionApi";
+import { toast } from "sonner";
 
 type FrequencyInfo = {
   label: string;
@@ -241,33 +241,36 @@ const ActionsCell = ({ row }: { row: any }) => {
 
   const transactionId = row.original.id;
   const { onOpenDrawer } = useEditTransactionDrawer();
-  // const [duplicateTransaction, {isLoading:isDuplicating}] = useDuplicateTransactionMutation();
-  // const [deleteTransaction, {isLoading: isDeleting}] = useDeleteTransactionMutation();
-
-  const isDeleting = true;
-  const isDuplicating = false;
+  const [duplicateTransaction, { isLoading: isDuplicating }] =
+    useDuplicateTransactionMutation();
+  const [deleteTransaction, { isLoading: isDeleting }] =
+    useDeleteTransactionMutation();
 
   const handleDuplicate = async (e: Event) => {
     e.preventDefault();
     if (isDuplicating) return;
 
-    // try {
-    //     await duplicateTransaction(transactionId).unwrap();
-    //     toast.success("Transaction duplicated successfully");
-    // } catch (error) {
-    //     toast.error(error.data?.message || "Failed to duplicate transaction" )
-    // }
+    try {
+      await duplicateTransaction(transactionId).unwrap();
+      toast.success("Transaction duplicated successfully");
+    } catch (error) {
+      const errorMessage =
+        (error as any).data?.message || "Failed to duplicate transaction";
+      toast.error(errorMessage);
+    }
   };
 
   const handleDelete = async (e: Event) => {
     e.preventDefault();
 
-    // try {
-    //   await deleteTransaction(transactionId);
-    //   toast.success("Tansaction deleted successfully");
-    // } catch (error) {
-    //   toast.error(error.data?.message || "Failed to delete transaction");
-    // }
+    try {
+      await deleteTransaction(transactionId);
+      toast.success("Tansaction deleted successfully");
+    } catch (error) {
+      const errorMessage =
+        (error as any).data?.message || "Failed to delete transaction";
+      toast.error(errorMessage);
+    }
   };
 
   return (

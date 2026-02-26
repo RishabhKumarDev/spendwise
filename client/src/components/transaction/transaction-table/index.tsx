@@ -2,12 +2,11 @@ import { _TRANSACTION_TYPE, _TransactionType } from "@/constant";
 import { useState } from "react";
 import useDebouncedSearch from "@/hooks/use-debounce-search";
 import DataTable from "@/components/data-table";
-import { TRANSACTION_DATA } from "@/components/transaction/transaction-table/data";
 import { transactionColumns } from "@/components/transaction/transaction-table/column";
-// import {
-//   useBulkDeleteTransactionMutation,
-//   useGetAllTransactionsQuery,
-// } from "@/features/transaction/transactionApi";
+import {
+  // useBulkDeleteTransactionMutation,
+  useGetAllTransactionsQuery,
+} from "@/features/transaction/transactionApi";
 // import { toast } from "sonner";
 
 type FilterType = {
@@ -34,10 +33,9 @@ function TransactioinTable({
     delay: 500,
   });
 
-  /*
 
-   const [bulkDeleteTransaction, { isLoading: isBulkDeleting }] =
-    useBulkDeleteTransactionMutation();
+  //  const [bulkDeleteTransaction, { isLoading: isBulkDeleting }] =
+  //   useBulkDeleteTransactionMutation();
 
   const { data, isFetching } = useGetAllTransactionsQuery({
     keyword: debouncedTerm,
@@ -56,14 +54,6 @@ const pagination = {
   pageSize: data?.data?.pagination?.pageSize ?? filter.pageSize,
 };
 
-*/
-
-  const pagination = {
-    totalItem: 20,
-    totalPages: 1,
-    pageNumber: filter.pageNumber,
-    pageSize: filter.pageSize,
-  };
 
   const handleSearch = (value: string) => {
     console.log(debouncedTerm);
@@ -105,10 +95,10 @@ const pagination = {
 
   return (
     <DataTable
-      data={TRANSACTION_DATA} //transactions
+      data={transactions} //transactions
       columns={transactionColumns}
       searchPlaceholder="Search transactions..."
-      isLoading={false}
+      isLoading={isFetching}
       isBulkDeleting={false}
       isShowPagination={isShowPagination}
       pagination={pagination}

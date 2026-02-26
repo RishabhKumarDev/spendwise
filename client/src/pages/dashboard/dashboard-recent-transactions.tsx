@@ -20,7 +20,7 @@ const DashboardRecentTransactions = () => {
       </CardHeader>
       <CardContent className="pt-0">
         <TransactionTable 
-        pageSize={5}
+        pageSize={20}
         isShowPagination={false} />
       </CardContent>
     </Card>

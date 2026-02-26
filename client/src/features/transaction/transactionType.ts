@@ -80,7 +80,7 @@ export interface AIScanReceiptData {
   date: string;
   description: string;
   category: string;
-  paymentMethod: string;
+  paymentMethod: PaymentMethodType;
   type: "INCOME" | "EXPENSE";
   receiptUrl: string;
 }

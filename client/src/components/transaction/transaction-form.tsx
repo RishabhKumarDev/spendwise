@@ -1,6 +1,6 @@
 import * as z from "zod";
 import { useEffect, useState } from "react";
-import { Calendar } from "lucide-react";
+import { Calendar, Loader } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
@@ -36,17 +36,18 @@ import {
   _TRANSACTION_TYPE,
   CATEGORIES,
   PAYMENT_METHODS,
+  PAYMENT_METHODS_ENUM,
 } from "@/constant";
 import { Switch } from "../ui/switch";
 import CurrencyInputField from "../ui/currency-input";
 import { SingleSelector } from "../ui/single-select";
 import { AIScanReceiptData } from "@/features/transaction/transactionType";
-// import {
-//   useCreateTransactionMutation,
-//   useGetSingleTransactionQuery,
-//   useUpdateTransactionMutation,
-// } from "@/features/transaction/transactionApi";
-// import { toast } from "sonner";
+import {
+  useCreateTransactionMutation,
+  useGetSingleTransactionQuery,
+  useUpdateTransactionMutation,
+} from "@/features/transaction/transactionApi";
+import { toast } from "sonner";
 
 const formSchema = z.object({
   title: z.string().min(2, { message: "Title must be at least 2 characters." }),
@@ -58,9 +59,14 @@ const formSchema = z.object({
   date: z.date({
     required_error: "Please select a date.",
   }),
-  paymentMethod: z
-    .string()
-    .min(1, { message: "Please select a payment method." }),
+  paymentMethod: z.enum([
+    PAYMENT_METHODS_ENUM.AUTO_DEBIT,
+    PAYMENT_METHODS_ENUM.MOBILE_PAYMENT,
+    PAYMENT_METHODS_ENUM.CASH,
+    PAYMENT_METHODS_ENUM.CARD,
+    PAYMENT_METHODS_ENUM.BANK_TRANSFER,
+    PAYMENT_METHODS_ENUM.OTHER,
+  ]),
   isRecurring: z.boolean(),
   frequency: z
     .enum([
@@ -88,16 +94,19 @@ function TransactionForm({
 }) {
   const [isScanning, setIsScanning] = useState(false);
 
-  // const { data, isLoading } = useGetSingleTransactionQuery(
-  //   transactionId || "",
-  //   { skip: !transactionId },
-  // );
-  // const editData = data?.data;
+  const { data, isLoading } = useGetSingleTransactionQuery(
+    transactionId || "",
+    { skip: !transactionId },
+  );
+  const editData = data?.data;
 
-  // const [createTransaction, { isLoading: isCreating }] =
-  //   useCreateTransactionMutation();
-  // const [updateTransaction, { isLoading: isUpdating }] =
-  //   useUpdateTransactionMutation();
+  const [createTransaction, { isLoading: isCreating }] =
+    useCreateTransactionMutation();
+
+  const [updateTransaction, { isLoading: isUpdating }] =
+    useUpdateTransactionMutation();
+
+  console.log( editData, "Edit DATA");
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -107,7 +116,7 @@ function TransactionForm({
       type: _TRANSACTION_TYPE.INCOME,
       category: "",
       date: new Date(),
-      paymentMethod: "",
+      paymentMethod: "CASH",
       isRecurring: false,
       frequency: null,
       description: "",
@@ -116,20 +125,20 @@ function TransactionForm({
   });
 
   useEffect(() => {
-    if (isEdit && transactionId) {
+    if (isEdit && transactionId && editData) {
       form.reset({
-        title: "",
-        amount: "",
-        type: _TRANSACTION_TYPE.INCOME,
-        category: "",
-        date: new Date(),
-        paymentMethod: "",
-        isRecurring: false,
-        frequency: null,
-        description: "",
+        title: editData?.title,
+        amount: editData?.amount?.toString(),
+        type: editData.type,
+        category: editData.category?.toLocaleLowerCase(),
+        date: new Date(editData?.date),
+        paymentMethod: editData.paymentMethod,
+        isRecurring: editData.isRecurring,
+        frequency: editData.recurringInterval,
+        description: editData.description,
       });
     }
-  }, [form, isEdit, transactionId]);
+  }, [editData, form, isEdit, transactionId]);
 
   const frequencyOptions = Object.entries(_TRANSACTION_FREQUENCY).map(
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -157,7 +166,7 @@ function TransactionForm({
 
   // handle form submission
   const onSubmit = async (values: FormValues) => {
-    // if(isCreating || isUpdating) return;
+    if (isCreating || isUpdating) return;
     console.log("Form submitted:", values);
 
     const payload = {
@@ -175,24 +184,30 @@ function TransactionForm({
     if (isEdit && transactionId) {
       console.log("Edit Transaction:", payload);
       onCloseDrawer?.();
-      // try {
-      //   await updateTransaction({ id: transactionId, payload }).unwrap();
-      //   onCloseDrawer?.();
-      //   toast.success("Transaction updated successfully");
-      // } catch (error: any) {
-      //   toast.error(error.data.message || "Failed to update transaction");
-      // }
+      try {
+        await updateTransaction({ id: transactionId, payload }).unwrap();
+        onCloseDrawer?.();
+        toast.success("Transaction updated successfully");
+      } catch (error) {
+        const errorMessage =
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          (error as any)?.data?.message || "Failed to update transaction";
+        toast.error(errorMessage);
+      }
 
       return;
     }
 
-    // try {
-    //   await createTransaction(payload).unwrap();
-    //   onCloseDrawer?.();
-    //   toast.success("Transaction created successfully");
-    // } catch (error) {
-    //     toast.error(error.data.message || "Failed to create transaction");
-    // }
+    try {
+      await createTransaction(payload).unwrap();
+      onCloseDrawer?.();
+      toast.success("Transaction created successfully");
+    } catch (error) {
+      const errorMessage =
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (error as any)?.data?.message || "Failed to create transaction";
+      toast.error(errorMessage);
+    }
   };
   return (
     <div className="relative pb-10 pt-5 px-2.5">
@@ -341,8 +356,9 @@ function TransactionForm({
                             !field.value && "text-muted-foreground",
                           )}
                         >
-                          {field.value ? (
-                            format(field.value, "PPP")
+                          {field.value &&
+                          !isNaN(new Date(field.value).getTime()) ? (
+                            format(new Date(field.value), "PPP")
                           ) : (
                             <span>Pick a date</span>
                           )}
@@ -388,13 +404,13 @@ function TransactionForm({
                         <SelectValue placeholder="Select payment method" />
                       </SelectTrigger>
                     </FormControl>
-                      <SelectContent>
-                        {PAYMENT_METHODS.map((method) => (
-                          <SelectItem key={method.value} value={method.value}>
-                            {method.label}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
+                    <SelectContent>
+                      {PAYMENT_METHODS.map((method) => (
+                        <SelectItem key={method.value} value={method.value}>
+                          {method.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
                   </Select>
                   <FormMessage />
                 </FormItem>
@@ -424,6 +440,7 @@ function TransactionForm({
                       checked={field.value}
                       className="cursor-pointer"
                       onCheckedChange={(checked) => {
+                        field.onChange(checked);
                         if (checked) {
                           form.setValue(
                             "frequency",
@@ -502,11 +519,16 @@ function TransactionForm({
             <Button
               type="submit"
               className="w-full !text-white"
-              disabled={isScanning}
+              disabled={isScanning || isCreating || isUpdating}
             >
               {isEdit ? "Update" : "Save"}
             </Button>
           </div>
+          {isLoading && (
+            <div className="absolute top-0 left-0 right-0 bottom-0 bg-white/70 dark:bg-background/70 z-50 flex justify-center">
+              <Loader className="h-8 w-8 animate-spin" />
+            </div>
+          )}
         </form>
       </Form>
     </div>
