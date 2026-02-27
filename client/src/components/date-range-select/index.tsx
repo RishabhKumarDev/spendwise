@@ -1,4 +1,5 @@
 import {
+  endOfDay,
   format,
   startOfMonth,
   startOfYear,
@@ -48,16 +49,16 @@ interface DateRangeselectProps {
   defaultRange?: DateRangeEnumType;
 }
 
-const today = new Date();
-const yesterday = subDays(today, 1);
+const now = new Date();
+const today = endOfDay(now);
 
 const presets: DateRangePreset[] = [
   {
     label: "Last 30 Days",
     value: DateRangeEnum.LAST_30_DAYS,
     getRange: () => ({
-      from: subDays(yesterday, 29),
-      to: yesterday,
+      from: subDays(today, 29),
+      to: today,
       value: DateRangeEnum.LAST_30_DAYS,
       label: "for Past 30 Days",
     }),

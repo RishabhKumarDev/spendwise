@@ -1,6 +1,5 @@
 import { DateRangeType } from "@/components/date-range-select";
-// import { useExpenseBreakdownAnalyticsQuery } from "@/features/analytics/analyticsApi";
-import { useMemo } from "react";
+import { useExpenseBreakdownAnalyticsQuery } from "@/features/analytics/analyticsApi";
 
 import {
   Card,
@@ -21,10 +20,7 @@ import { formatCurrency } from "@/lib/format-curency";
 import { formatPercentage } from "@/lib/format-percentage";
 import { EmptyState } from "@/components/empty-state";
 import { Cell, Label, Pie, PieChart } from "recharts";
-interface Category {
-  name: string;
-  amount: number;
-}
+
 
 const COLORS = [
   "var(--color-chart-1)",
@@ -33,24 +29,6 @@ const COLORS = [
   "var(--color-chart-4)",
 ];
 
-const _categories: Category[] = [
-  {
-    name: "Food & Dining",
-    amount: 450,
-  },
-  {
-    name: "Rent",
-    amount: 500,
-  },
-  {
-    name: "Utilities",
-    amount: 300,
-  },
-  {
-    name: "Others",
-    amount: 100,
-  },
-];
 
 // Create chart config for shadcn UI chart
 const chartConfig = {
@@ -60,24 +38,12 @@ const chartConfig = {
 } satisfies ChartConfig;
 
 function ExpensePieChart({ dateRange }: { dateRange?: DateRangeType }) {
-  /*const { data, isFetching} = useExpenseBreakdownAnalyticsQuery({
+   const { data, isFetching} = useExpenseBreakdownAnalyticsQuery({
     preset: dateRange?.value,
   });
   const categories = data?.data?.breakdown || [];
-  const totalSpent = data?.data?.totalSpent || 0;*/
+  const totalSpent = data?.data?.totalSpent || 0;
 
-  const isFetching = false;
-  const totalSpent = useMemo(() => {
-    return _categories.reduce((sum, cate) => sum + cate.amount, 0);
-  }, []);
-
-  const categories = useMemo(() => {
-    return _categories.map((category) => ({
-      name: category.name,
-      value: category.amount,
-      percentage: Math.round((category.amount / totalSpent) * 100),
-    }));
-  }, [totalSpent]);
 
   if (isFetching) {
     return <PieChartSkeleton />;
