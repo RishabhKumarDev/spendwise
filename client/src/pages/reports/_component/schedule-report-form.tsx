@@ -42,15 +42,13 @@ function ScheduleReportForm({ onCloseDrawer }: { onCloseDrawer: () => void }) {
     resolver: zodResolver(formSchema),
     defaultValues: {
       email: user?.email || "",
-      isEnabled: reportSetting?.isEnabled || true,
+      isEnabled: reportSetting?.isEnabled ?? true,
       frequency: reportSetting?.frequency || "MONTHLY",
     },
   });
 
   const onSubmit = async (values: FormValues) => {
     const payload = { isEnabled: values.isEnabled };
-    console.log("Form submitted:", payload);
-    onCloseDrawer();
 
     try {
       await updateReportSetting(payload).unwrap();
