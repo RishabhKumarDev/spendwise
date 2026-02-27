@@ -1,4 +1,4 @@
-// import { useAiScanReceiptMutation } from "@/features/transaction/transactionApi";
+import { useAiScanReceiptMutation } from "@/features/transaction/transactionApi";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
@@ -28,7 +28,7 @@ function ReceiptScanner({
     resetProgress,
   } = useProgressLoader({ initialProgress: 10, completionDelay: 500 });
 
-  // const [aiScanReceipt] = useAiScanReceiptMutation();
+  const [aiScanReceipt] = useAiScanReceiptMutation();
 
   const handleReceiptUpload = async (
     event: React.ChangeEvent<HTMLInputElement>,
@@ -63,39 +63,22 @@ function ReceiptScanner({
         updateProgress(currentProgress);
       }, 250);
 
-      setTimeout(() => {
+      try {
+        const data = await aiScanReceipt(formData).unwrap();
+        updateProgress(100);
+        console.log("Ai Scan data::", data);
+        onScanComplete(data);
+        toast.success("Receipt scanned successfully");
+      } catch (error) {
+        const errorMessage = error instanceof Object && 'data' in error && typeof error.data === 'object' && error.data !== null && 'error' in error.data ? (error.data as { error: string }).error : "Failed to scan receipt";
+        toast.error(errorMessage);
+      }finally{
         clearInterval(interval);
-
-        onScanComplete({
-          title: "Netflix Subscription",
-          amount: 15.99,
-          date: new Date().toISOString(),
-          description: "Monthly Netflix Subscription",
-          category: "Netflix",
-          paymentMethod: "CARD",
-          receiptUrl: result,
-          type: "EXPENSE",
-        });
         doneProgress();
         resetProgress();
         setReceipt(null);
         onLoadingChange(false);
-      }, 2000);
-
-      // try {
-      //   const data = await aiScanReceipt(formData).unwrap();
-      //   updateProgress(100);
-      //   console.log("Ai Scan data::", data);
-      //   onScanComplete(data);
-      //   toast.success("Receipt scanned successfully");
-      // } catch (error) {
-      //   toast.error(error.data?.message || "Failed to scan receipt");
-      // }finally{
-      //   clearInterval(interval);
-      //   resetProgress();
-      //   setReceipt(null);
-      //   onLoadingChange(false);
-      // }
+      }
     };
     reader.readAsDataURL(file);
   };

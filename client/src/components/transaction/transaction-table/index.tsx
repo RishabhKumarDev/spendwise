@@ -4,10 +4,10 @@ import useDebouncedSearch from "@/hooks/use-debounce-search";
 import DataTable from "@/components/data-table";
 import { transactionColumns } from "@/components/transaction/transaction-table/column";
 import {
-  // useBulkDeleteTransactionMutation,
+  useBulkDeleteTransactionMutation,
   useGetAllTransactionsQuery,
 } from "@/features/transaction/transactionApi";
-// import { toast } from "sonner";
+import { toast } from "sonner";
 
 type FilterType = {
   type?: _TransactionType | undefined;
@@ -34,8 +34,8 @@ function TransactioinTable({
   });
 
 
-  //  const [bulkDeleteTransaction, { isLoading: isBulkDeleting }] =
-  //   useBulkDeleteTransactionMutation();
+   const [bulkDeleteTransaction, { isLoading: isBulkDeleting }] =
+    useBulkDeleteTransactionMutation();
 
   const { data, isFetching } = useGetAllTransactionsQuery({
     keyword: debouncedTerm,
@@ -56,8 +56,6 @@ const pagination = {
 
 
   const handleSearch = (value: string) => {
-    console.log(debouncedTerm);
-
     setSearchTerm(value);
   };
 
@@ -78,19 +76,17 @@ const pagination = {
     setFilter((prev) => ({ ...prev, pageNumber }));
   };
   const handleBulkDelete = async (transactionIds: string[]) => {
-    console.log(transactionIds);
 
-    /*
 
     try {
       await bulkDeleteTransaction(transactionIds).unwrap();
       toast.success("Transactions deleted successfully");
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       toast.error(
         error?.data?.data?.message || "Failed to delete transactions",
       );
     }
-*/
   };
 
   return (
@@ -99,7 +95,7 @@ const pagination = {
       columns={transactionColumns}
       searchPlaceholder="Search transactions..."
       isLoading={isFetching}
-      isBulkDeleting={false}
+      isBulkDeleting={isBulkDeleting}
       isShowPagination={isShowPagination}
       pagination={pagination}
       filters={[

@@ -61,7 +61,7 @@ export const getTransactionById = asyncHandler(
 
     res.status(HTTP_STATUS.OK).json({
       message: "Transaction fetched sucessfully",
-      data: { ...transaction },
+      data: { ...transaction.toObject() },
     });
   }
 );

@@ -106,7 +106,6 @@ function TransactionForm({
   const [updateTransaction, { isLoading: isUpdating }] =
     useUpdateTransactionMutation();
 
-  console.log( editData, "Edit DATA");
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -167,7 +166,6 @@ function TransactionForm({
   // handle form submission
   const onSubmit = async (values: FormValues) => {
     if (isCreating || isUpdating) return;
-    console.log("Form submitted:", values);
 
     const payload = {
       title: values.title,
@@ -182,7 +180,6 @@ function TransactionForm({
     };
 
     if (isEdit && transactionId) {
-      console.log("Edit Transaction:", payload);
       onCloseDrawer?.();
       try {
         await updateTransaction({ id: transactionId, payload }).unwrap();
@@ -374,7 +371,6 @@ function TransactionForm({
                         mode="single"
                         selected={field.value}
                         onSelect={(date) => {
-                          console.log(date);
                           field.onChange(date);
                         }}
                         disabled={(date) => date < new Date("2023-01-01")}
@@ -524,7 +520,7 @@ function TransactionForm({
               {isEdit ? "Update" : "Save"}
             </Button>
           </div>
-          {isLoading && (
+          {isLoading || isUpdating && (
             <div className="absolute top-0 left-0 right-0 bottom-0 bg-white/70 dark:bg-background/70 z-50 flex justify-center">
               <Loader className="h-8 w-8 animate-spin" />
             </div>

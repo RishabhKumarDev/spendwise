@@ -306,11 +306,17 @@ export const scanReceiptService = async (
       type: data.type,
       receiptUrl: file.path,
     };
-  } catch (error) {
-    console.log(error)
-    return {
-      error: "Reciept scanning service is unavilable",
-      actualEr: error,
-    };
+  } catch (error:any) {
+   const message = error?.message || "";
+
+  if (
+    error?.status === 429 ||
+    message.includes("RESOURCE_EXHAUSTED") ||
+    message.includes("Quota exceeded")
+  ) {
+    throw new Error("AI free limit exceeded. Please upgrade your plan or try again later.");
+  }
+
+  throw error; // rethrow unknown errors
   }
 };

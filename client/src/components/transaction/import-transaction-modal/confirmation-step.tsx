@@ -118,14 +118,6 @@ function ConfirmationStep({
     }, 250);
 
     const payload = { transactions: transactions as BulkTransactionType[] };
-    console.log(payload, "payload");
-
-    setTimeout(() => {
-      clearInterval(interval);
-      doneProgress(); // Sets progress to 100%
-      resetProgress(); // Optional reset for reuse
-      onComplete();
-    }, 2000);
 
     try {
       await bulkImportTransaction(payload).unwrap();
@@ -146,6 +138,7 @@ function ConfirmationStep({
     } finally {
       clearInterval(interval);
       setTimeout(() => {
+        doneProgress();
         resetProgress();
         onComplete();
       }, 500);
@@ -168,7 +161,6 @@ function ConfirmationStep({
               ? new Date(row[csvColumn])
               : row[csvColumn];
       });
-      console.log(transaction, "transaction");
       try {
         const validated = transactionSchema.parse(transaction);
         results.push(validated);
