@@ -12,7 +12,7 @@ function DashboardSummary({dateRange, setDateRange}:DashboardSummaryProps) {
   return (
     <div className="w-full">
       <DashboardHeader
-        title={`Welcome back ${user?.name || "Void"}`}
+        title={`Welcome back, ${user?.name || "Void"}`}
         subtitle="This is your overview report for the selected period"
         dateRange={dateRange}
         setDateRange={setDateRange}

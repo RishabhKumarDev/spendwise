@@ -1,183 +1,298 @@
-# SpendWise 💸  
-A full-stack expense tracking application with advanced analytics, recurring transactions, and automated background jobs.
+# 💰 Spendwise
 
-SpendWise helps users track income and expenses, analyze spending patterns, manage recurring transactions, and receive automated financial reports — all in one place.
+> A modern AI-powered expense tracker built with the MERN stack.
 
----
-
-## ✨ Key Features
-
-### 🔐 Authentication & User Management
-- Email & password authentication using JWT
-- Secure user sessions
-- Upload profile photo (Cloudinary)
-
-### 💼 Transactions & Expenses
-- Create, edit, duplicate, and delete transactions
-- Bulk delete transactions
-- CSV import for transactions
-- Advanced filtering & search
-- Pagination support
-- Date range filters (Last 7 days, Last 30 days, custom range, etc.)
-
-### ♻️ Recurring Transactions (Cron Jobs)
-- Define recurring income or expense transactions
-- Automated processing using cron jobs
-- Recurring logic runs independently of user requests
-
-### 📊 Analytics & Insights
-- Advanced analytics using MongoDB Aggregation Pipeline
-- Expense breakdown (pie chart)
-- Income vs expense trends (line chart)
-- Category-based insights
-
-### 📄 Automated Reports
-- Monthly financial reports
-- Auto-generated and emailed to users
-- Background cron-based execution
-
-### 📤 Receipt Handling
-- Upload receipts
-- AI-based receipt scanning (OCR)
+🔗 **Live Demo:** [LINK]  
+🎥 **Project Walkthrough(planned):** [LINK]
 
 ---
 
-## 🏗️ Architecture Overview
+## 📌 Overview
 
-SpendWise uses a **multi-process backend architecture** to ensure scalability and reliability.
+**Spendwise** is a full-stack expense tracking application that helps users manage their income, expenses, and savings with powerful analytics and automated monthly reports.
 
-### Backend is split into two runtime processes:
+It is designed for:
+- Individuals who want better financial awareness  
+- Students tracking budgets  
+- Professionals monitoring spending habits  
+- Anyone who wants structured financial insights  
 
-#### 1️⃣ API Server
-- Handles HTTP requests
-- Authentication & authorization
-- Transaction and analytics APIs
-- User-driven operations
-
-#### 2️⃣ Background Worker
-- Runs scheduled cron jobs
-- Handles recurring transactions
-- Generates and emails monthly reports
-- Runs independently from the API server
-
-Both processes:
-- Share the same codebase
-- Use the same database
-- Run as separate Node.js processes
-
-This prevents cron jobs from running multiple times when the API server scales.
+The application includes AI integration for receipt scanning and financial insights. While the AI connection is implemented, some AI features require valid API billing credentials to return results.
 
 ---
 
-## 🧠 Tech Stack
+## 🚀 Features
+
+### 🔐 Authentication & Security
+- User registration & login
+- Password hashing using `bcrypt`
+- JWT-based authentication
+- Secure cookies
+- Encrypted Redux persistence
+- Passport strategy (JWT)
+- 🔜 GitHub OAuth login (planned)
+
+---
+
+### 📊 Dashboard & Analytics
+
+- Available Balance
+- Total Income
+- Total Expenses
+- Savings Rate
+- Daily expense charts
+- Category-based breakdown
+- Top 5 spending categories
+- Aggregation pipeline for advanced analytics
+
+Charts powered by `Recharts`.
+
+---
+
+### 💳 Expense Management
+
+- Full CRUD operations for:
+  - Transactions
+  - User profile
+- Profile image upload (Cloudinary)
+- Pagination
+- Filtering
+- React TanStack Table integration
+- CSV bulk import support
+- Receipt scanning with AI (requires valid API billing)
+
+---
+
+### 🤖 AI Integration
+
+Integrated using `@google/genai`.
+
+Features:
+- AI-powered receipt scanning
+- AI-based monthly spending insights
+- Financial suggestions in reports
+
+⚠️ Note: AI responses require active billing credentials to function.
+
+---
+
+### 📧 Automated Monthly Reports
+
+- Cron-based monthly email summary
+- Includes:
+  - Total spending
+  - Income vs expenses
+  - Category breakdown
+  - AI-generated insights
+- Email delivery powered by `Resend`
+- Background worker system
+
+---
+
+### 🌙 UI & Experience
+
+- Dark mode / Light mode
+- Responsive design
+- Modern UI using:
+  - Radix UI
+  - TailwindCSS
+  - Lucide Icons
+- Clean dashboard layout
+- Toast notifications
+
+---
+
+## 🛠 Tech Stack
+
+### Frontend
+- React 19
+- TypeScript
+- Vite
+- Redux Toolkit
+- Redux Persist
+- React Router
+- TanStack Table
+- Recharts
+- TailwindCSS
+- React Hook Form + Zod
+- Radix UI
 
 ### Backend
 - Node.js
+- Express 5
 - TypeScript
-- Express
-- MongoDB & Mongoose
+- MongoDB + Mongoose
 - JWT Authentication
-- node-cron
-- Cloudinary
-- MongoDB Aggregation Pipeline
-- Resend (Transactional Email Service)
-
-### Frontend
-- React
-- TypeScript
-- Chart libraries for data visualization
+- Passport (JWT Strategy)
+- bcrypt
+- Multer + Cloudinary
+- Node-Cron
+- Resend (Email Service)
+- Google GenAI SDK
 
 ---
 
 ## 📁 Project Structure
 
-spendwise/
-├── backend/
-│ ├── src/
-│ │ ├── config/
-│ │ ├── controllers/
-│ │ ├── crons/
-│ │ ├── enums/
-│ │ ├── middlewares/
-│ │ ├── models/
-│ │ ├── routes/
-│ │ ├── services/
-│ │ ├── utils/
-│ │ ├── validators/
-│ │ └── index.ts
-│ ├── package.json
-│ └── tsconfig.json
+```
+backend/
 │
-├── client/
-│ └── (frontend source)
+├── src/
+│   ├── @types/
+│   ├── config/
+│   ├── controllers/
+│   ├── crons/
+│   ├── enums/
+│   ├── mailers/
+│   ├── middlewares/
+│   ├── models/
+│   ├── routes/
+│   ├── services/
+│   ├── utils/
+│   ├── validators/
+│   ├── index.ts
+│   └── worker.ts
 │
-└── README.md
+├── package.json
+└── tsconfig.json
 
-
----
-
-## ⚙️ Backend Responsibilities
-
-### API Server
-- Handles all incoming HTTP requests
-- Authentication & authorization
-- CRUD operations for transactions
-- Analytics & reporting APIs
-- File uploads and validations
-
-### Background Worker
-- Executes cron jobs on defined schedules
-- Processes recurring transactions
-- Generates monthly reports
-- Sends automated emails
-- Directly interacts with the database (no HTTP layer)
-
----
-
-## 🔄 Cron Jobs
-
-SpendWise uses cron jobs for:
-- Processing recurring transactions
-- Generating monthly reports
-- Automated email delivery
-
-Cron jobs:
-- Are not triggered by user requests
-- Run on schedules defined by the system
-- Execute in a dedicated worker process
+client/
+│
+├── src/
+│   ├── @types/
+│   ├── app/
+│   ├── assets/
+│   ├── components/
+│   ├── constant/
+│   ├── context/
+│   ├── features/
+│   ├── hooks/
+│   ├── layouts/
+│   ├── lib/
+│   ├── pages/
+│   ├── routes/
+│   ├── App.tsx
+│   ├── main.tsx
+│   └── index.css
+│
+├── package.json
+└── vite.config.ts
+```
 
 ---
 
-## 🚀 Frontend Overview
+## ⚙️ Installation & Setup
 
-The frontend provides:
-- Authentication flows
-- Transaction management UI
-- Analytics dashboards
-- Interactive charts
-- Profile management
+### 1️⃣ Clone the Repository
 
-(Frontend documentation and setup will be expanded separately.)
+```
+git clone <your-repository-url>
+cd Spendwise
+```
 
 ---
 
-## 🔮 Future Improvements
+### 2️⃣ Backend Setup
 
-- Job retries & failure handling
-- Queue-based background processing
-- Notification system
-- Performance optimizations
-- Advanced budgeting features
+```
+cd backend
+npm install
+```
+
+Create a `.env` file based on the provided `.env.example` and fill in your values.
+
+Start development server:
+
+```
+npm run dev
+```
+
+Start cron worker (monthly reports):
+
+```
+npm run cron
+```
+
+Production build:
+
+```
+npm run build
+npm start
+```
 
 ---
 
-## 📌 Notes
+### 3️⃣ Frontend Setup
 
-- The backend and worker run as separate Node.js processes.
-- Cron jobs are isolated from API instances to avoid duplicate execution.
-- Designed with scalability and maintainability in mind.
+```
+cd client
+npm install
+npm run dev
+```
+
+Build for production:
+
+```
+npm run build
+npm run preview
+```
 
 ---
 
-**SpendWise** — Track smarter. Spend wiser.
+## 🔐 Environment Variables
 
+Refer to `.env.example` for required variables.
+
+Typical variables include:
+
+```
+PORT=
+MONGODB_URI=
+JWT_SECRET=
+CLOUDINARY_CLOUD_NAME=
+CLOUDINARY_API_KEY=
+CLOUDINARY_API_SECRET=
+RESEND_API_KEY=
+GOOGLE_GENAI_API_KEY=
+FRONTEND_URL=
+```
+
+
+## 📈 Future Improvements
+
+- GitHub OAuth login
+- Payment & billing system
+- Subscription plans
+- Enhanced AI financial modeling
+- Admin analytics (if needed)
+
+---
+
+## 🧪 Testing
+
+No automated test suite currently implemented.
+
+---
+
+## 📜 License
+
+ISC
+
+---
+
+## 🙌 Final Notes
+
+Spendwise is both:
+- A functional production-ready application
+- A learning milestone project
+
+It demonstrates:
+- Full-stack architecture
+- Authentication & security
+- Data aggregation
+- Cron jobs & background workers
+- AI integration
+- Real-world deployment practices
+
+
+**Built with focus, learning, and consistency.**
