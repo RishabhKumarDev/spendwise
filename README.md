@@ -186,7 +186,7 @@ client/
 ### 1️⃣ Clone the Repository
 
 ```
-git clone <your-repository-url>
+git clone https://github.com/RishabhKumarDev/spendwise.git
 cd Spendwise
 ```
 
